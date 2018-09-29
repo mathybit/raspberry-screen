@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Populate /etc/X11/xorg.conf.d/ with calibration config
+if [ -d /etc/X11/xorg.conf.d ]; then
+	if [ -e /etc/X11/xorg.conf.d/99-calibration.conf ]; then
+		sudo cp /etc/X11/xorg.conf.d/99-calibration.conf /etc/X11/xorg.conf.d/99-calibration.conf-bak
+	fi
+	sudo cp -rf ./etc/99-calibration.conf-35  /etc/X11/xorg.conf.d/99-calibration.conf
+else
+	sudo mkdir /etc/X11/xorg.conf.d
+	sudo cp -rf ./etc/99-calibration.conf-35  /etc/X11/xorg.conf.d/99-calibration.conf
+fi
+
+
+# Populate the /boot directory with the overlay file, as well as the correct config
+# We make backups of the existing files first
+sudo cp ./boot/tft35a-overlay.dtb /boot/overlays/tft35a.dtbo
+sudo cp /boot/config.txt /boot/config.txt-bak
+sudo cp -f ./boot/config-35.txt /boot/config.txt
+
+# Populate the X11 configuration in /usr/share/X11/xorg.conf.d/
+if [ -e /usr/share/X11/xorg.conf.d/99-fbturbo.conf ]; then
+	sudo cp /usr/share/X11/xorg.conf.d/99-fbturbo.conf /usr/share/X11/xorg.conf.d/99-fbturbo.conf-bak
+fi
+sudo cp ./usr/99-fbturbo.conf  /usr/share/X11/xorg.conf.d/
+
+sudo apt-get install xserver-xorg-input-evdev
+#sudo reboot
